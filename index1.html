@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script1.js" async></script>
+    <title>Guessing Game</title>
+    <link rel="stylesheet" href="style1.css" >
+</head>
+<body>
+    <h1 class="pageTitle">Guess Correctly</h1>
+
+    <div class="overlay-text visible">Start Game</div>
+
+    <div id="gameOvertext" class="overlay-text ">GAME OVER
+        <span class="overlay-text-small" >Click to Restart</span>
+    </div>
+
+    <div id="victory-text" class="overlay-text ">YOU WON
+        <span class="overlay-text-small" >Click to Restart</span>
+    </div>
+
+    <div class="mainContent">
+        <div class="gameInfo-Container">
+            <div class="gameInfo">
+                Time <span id="timeCounter">100</span>
+            </div>
+            <div class="gameInfo">
+                Flips <span id="flipCounter">0</span>
+            </div>
+        </div>
+
+        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Bat.png">
+            </div>
+        </div>
+        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Bat.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Bones.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Bones.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Cauldron.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Cauldron.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Dracula.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Dracula.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Eye.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Eye.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Ghost.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Ghost.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Pumpkin.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Pumpkin.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Skull.png">
+            </div>
+        </div>        <div class="card ">
+            <div class="cardBack card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/Cobweb.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/Cobweb.png">
+                <img class="front" src="Assets/Images/cardfront1.jpg" width="125" height="175">
+                <img class="front" src="Assets/Images/cardback1.jpg" width="125" height="175">
+            </div>
+            <div class="cardFront card-face">
+                <img class="cobweb cobwebTopleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebTopright" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomleft" src="Assets/Images/CobwebGrey.png">
+                <img class="cobweb cobwebBottomright" src="Assets/Images/CobwebGrey.png">
+                <img class="back" src="Assets/Images/Skull.png">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
