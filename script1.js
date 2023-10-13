@@ -31,13 +31,15 @@ class AudioController {
     }
 }
 
-class MixOrMatch {
-    constructor(totalTime, cards) {
+class MixOrMatchMultiplayer {
+    constructor(totalTime, cards, players) {
         this.cardsArray = cards;
         this.totalTime = totalTime;
         this.timeRemaining = totalTime;
-        this.timer = document.getElementById('timeCounter')
+        this.timer = document.getElementById('timeCounter');
         this.ticker = document.getElementById('flipCounter');
+        this.players = players;
+        this.currentPlayerIndex = 0; // Index of the current player
         this.audioController = new AudioController();
     }
 
@@ -47,12 +49,14 @@ class MixOrMatch {
         this.cardToCheck = null;
         this.matchedCards = [];
         this.busy = true;
+        this.currentPlayerIndex = 0; // Start with the first player
+        this.updatePlayerInfo(); // Display current player info
         setTimeout(() => {
             this.audioController.startMusic();
             this.shuffleCards(this.cardsArray);
             this.countdown = this.startCountdown();
             this.busy = false;
-        }, 500)
+        }, 500);
         this.hideCards();
         this.timer.innerText = this.timeRemaining;
         this.ticker.innerText = this.totalClicks;
@@ -82,13 +86,13 @@ class MixOrMatch {
         });
     }
     flipCard(card) {
-        if(this.canFlipCard(card)) {
+        if (this.canFlipCard(card)) {
             this.audioController.flip();
             this.totalClicks++;
             this.ticker.innerText = this.totalClicks;
             card.classList.add('visible');
 
-            if(this.cardToCheck) {
+            if (this.cardToCheck) {
                 this.checkForCardMatch(card);
             } else {
                 this.cardToCheck = card;
@@ -133,7 +137,17 @@ class MixOrMatch {
     canFlipCard(card) {
         return !this.busy && !this.matchedCards.includes(card) && card !== this.cardToCheck;
     }
+    updatePlayerInfo() {
+        const currentPlayer = this.players[this.currentPlayerIndex];
+        document.getElementById('playerInfo').innerText = `Player: ${currentPlayer.name} Score: ${currentPlayer.score}`;
+    }
 }
+
+// Create an array of player objects
+const players = [
+    { name: 'Player 1', score: 0 },
+    { name: 'Player 2', score: 0 },
+];
 
 if (document.readyState == 'loading') {
     document.addEventListener('DOMContentLoaded', ready);
@@ -144,7 +158,7 @@ if (document.readyState == 'loading') {
 function ready() {
     let overlays = Array.from(document.getElementsByClassName('overlay-text'));
     let cards = Array.from(document.getElementsByClassName('card'));
-    let game = new MixOrMatch(100, cards);
+    let game = new MixOrMatchMultiplayer(100, cards, players);
 
     overlays.forEach(overlay => {
         overlay.addEventListener('click', () => {
