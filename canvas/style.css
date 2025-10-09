@@ -1,0 +1,510 @@
+/*
+    Guess Correctly - CSS Styles (Fixed for Overflow/Playability)
+    Author: ndmx-alex (Alexander) - October 2025
+*/
+
+@font-face {
+    font-family: "Creepy";
+    src: url("Fonts/Creepy.woff") format("woff"),
+        url("Fonts/Creepy.woff2") format("woff2");
+    font-display: swap;
+}
+@font-face {
+    font-family: "Lunacy";
+    src: url("Fonts/Lunacy.woff") format("woff"),
+        url("Fonts/Lunacy.woff2") format("woff2");
+    font-display: swap;
+}
+
+* { box-sizing: border-box; }
+
+html { min-height: 100vh; cursor: crosshair; /* Fallback since .cur files don't work in browsers */ }
+
+body {
+    margin: 0;
+    background: radial-gradient(orange, brown, tan);
+    font-family: serif; /* Fallback to serif */
+}
+
+.pageTitle {
+    color: rgb(182, 207, 89);
+    font-family: Creepy, serif;
+    font-weight: normal;
+    text-align: center;
+    font-size: clamp(2rem, 5vw, 4rem); /* Cap at 4rem to prevent overflow */
+    margin: 10px 0;
+    line-height: 1.2; /* Prevent multi-line bloat */
+}
+
+/* Audio Control Button - Mute/unmute toggle */
+.audio-control {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 187, 137, 0.9);
+    border: 2px solid #333;
+    color: rgb(138, 221, 42);
+    font-size: 24px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.audio-control:hover {
+    background: rgba(255, 187, 137, 1);
+    transform: scale(1.1);
+}
+
+.audio-control.muted {
+    opacity: 0.6;
+}
+
+/* Game Info Container - Displays time, flips, player turn, and scores */
+.gameInfo-Container {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    flex-wrap: wrap; /* Stack on small screens */
+}
+
+.gameInfo {
+    font-family: Lunacy, serif;
+    color: rgb(138, 221, 42);
+    font-size: clamp(1rem, 3vw, 1.5rem); /* Cap to prevent huge text */
+    margin: 5px;
+}
+
+/* Landing Page Mode Selection */
+.modeSelection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.modeContainer {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 20px;
+    border: 3px solid #ffbb89;
+    box-shadow: 0 8px 32px rgba(255, 187, 137, 0.3);
+}
+
+.modeContainer h2 {
+    color: rgb(182, 207, 89);
+    font-family: Creepy, serif;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    margin-bottom: 30px;
+}
+
+.modeBtn {
+    display: block;
+    width: 100%;
+    margin: 15px 0;
+    padding: 20px;
+    font-size: 1.2rem;
+    background: linear-gradient(45deg, #ffbb89, #ffb366);
+    border: 2px solid #333;
+    border-radius: 10px;
+    color: rgb(138, 221, 42);
+    cursor: pointer;
+    font-family: Lunacy, serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 187, 137, 0.3);
+}
+
+.modeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 187, 137, 0.5);
+    background: linear-gradient(45deg, #ffb366, #ffbb89);
+}
+
+.joinSection {
+    margin-top: 20px;
+}
+
+.gameIdInput {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    box-sizing: border-box;
+}
+
+.gameIdInput:focus {
+    outline: none;
+    border-color: rgb(138, 221, 42);
+    box-shadow: 0 0 10px rgba(138, 221, 42, 0.3);
+}
+
+.joinBtn {
+    background: linear-gradient(45deg, #8add2a, #6bbf1a) !important;
+    color: white !important;
+}
+
+.joinBtn:hover {
+    background: linear-gradient(45deg, #6bbf1a, #8add2a) !important;
+}
+
+/* Button Styles - Spooky themed buttons for game modes */
+button {
+    margin: 15px;
+    padding: 20px 30px; /* Larger padding for better touch targets */
+    font-size: 1.5em;
+    background-color: #ffbb89; /* Orange background */
+    border: 2px solid #333;
+    cursor: pointer;
+    font-family: Lunacy, serif;
+    color: rgb(138, 221, 42); /* Green text */
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover, button:focus {
+    transform: scale(1.05); /* Subtle hover/focus scale effect */
+    box-shadow: 0 4px 8px rgba(255, 187, 137, 0.3);
+    outline: 2px solid rgb(138, 221, 42); /* Accessible focus outline */
+    outline-offset: 2px;
+}
+
+/* Input Field - For entering game ID to join multiplayer games */
+input {
+    margin: 10px;
+    padding: 10px;
+    font-size: 1.2em;
+    border: 2px solid #333;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+input:focus {
+    outline: 2px solid rgb(138, 221, 42);
+    outline-offset: 2px;
+    border-color: rgb(138, 221, 42);
+}
+
+/* Player Info and Scores - Multiplayer game display elements */
+#playerInfo, #scores {
+    font-size: 2em;
+}
+
+/* Main Game Content - 4x4 grid layout with 3D perspective for card flipping */
+.mainContent {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Use fr for responsive sizing */
+    grid-gap: 15px;
+    margin: 20px auto;
+    justify-content: center;
+    max-width: 800px;
+    perspective: 500px;
+    padding: 10px; /* Ensure visibility */
+}
+
+/* Card Styles - Individual memory cards with flip animation */
+.card {
+    position: relative;
+    height: 150px; /* Slightly larger for playability */
+    width: 120px;
+    backface-visibility: hidden;
+    visibility: visible !important; /* Force show */
+}
+
+/* Card Face - Base styling for both front and back of cards */
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid;
+    transition: transform 0.6s ease-in-out;
+}
+
+.card.visible .cardBack {
+    transform:rotateY(-180deg);
+}
+.card.visible .cardFront {
+    transform:rotateY(0);
+}
+.card.matched .back {
+    animation: dance 1s linear infinite 500ms;
+}
+
+.card.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Overlay Text - Game state overlays (start, game over, victory) */
+.overlay-text {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    color: rgb(182, 207, 89);
+    font-family: Creepy, serif;
+    background: rgba(0,0,0,0.8); /* Darker for readability */
+    flex-direction: column;
+    gap: 10px;
+}
+
+.overlay-text.visible {
+    display: flex;
+    animation: overlay-grow 0.5s forwards;
+}
+
+.overlay-text-small {
+    font-size: 0.5em; /* Smaller subtitle */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    color: white;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+/* Keyframe Animations */
+@keyframes overlay-grow {
+    from {
+        background-color: rgba(0, 0, 0,0);
+        font-size: 0;
+    }
+    to {
+        background-color: rgba(0,0,0, .8);
+        font-size:10em;
+    }
+}
+
+@keyframes dance {
+    0%, 100% {
+        transform: rotate(0);
+    }
+    25% {
+        transform: rotate(-30deg);
+    }
+    75% {
+        transform: rotate(30deg);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.cardBack {
+    background-color: black;
+    border-color: cornflowerblue;
+}
+
+.cardFront {
+    transform: rotateY(180deg);
+    background-color: #ffbb89;
+    border-color: #333;
+}
+.back {
+    transform: scale(.9);
+    transition: transform 100ms ease-in-out;
+}
+
+.cardFront:hover .back {
+    transform: scale(1);
+}
+
+.cobweb {
+    position: absolute;
+    width: 47px;
+    height: 47px;
+    transition: width 100ms ease-in-out, height 100ms ease-in-out;
+}
+
+.card-face:hover .cobweb {
+    width: 52px;
+    height: 52px;
+}
+
+.cobwebTopleft {
+    transform: rotate(270deg);
+    top: 0;
+    left: 0;
+    z-index: 4;
+}
+
+.cobwebTopright {
+    top: 0;
+    right: 0;
+    z-index: 4;
+}
+
+.cobwebBottomleft {
+    transform: rotate(180deg);
+    bottom: 0;
+    left: 0;
+    z-index: 4;
+}
+
+.cobwebBottomright {
+    transform: rotate(90deg);
+    bottom: 0;
+    right: 0;
+    z-index: 4;
+}
+
+.front {
+    display: block;
+
+    position: absolute;
+    /* transitions */
+    -webkit-transition: all .20s ease;
+       -moz-transition: all .20s ease;
+        -ms-transition: all .20s ease;
+         -o-transition: all .20s ease;
+            transition: all .20s ease;
+    transition: transform 200ms 
+}
+.cardBack > img:nth-child(5){ /* first <img> child of <div> */
+    filter: alpha(opacity=100); /* IE stuff */
+    opacity: 1;
+    z-index: 2;
+}
+.cardBack > img:nth-child(6){ /* second <img> child of <div> */
+    filter: alpha(opacity=0); /* IE stuff */
+    opacity: 0;
+    z-index: 1;
+}
+/* hover */
+.cardBack:hover > img:nth-child(5){ 
+    filter: alpha(opacity=0);
+    opacity: 0;
+    z-index: 1;
+}
+.cardBack:hover > img:nth-child(6){ 
+    filter: alpha(opacity=100);
+    opacity: 1;
+    z-index: 2;
+}
+
+@media (max-width: 600px) {
+    .mainContent {
+        grid-template-columns: repeat(2, auto); /* 2x2 grid on mobile */
+        grid-gap: 10px; /* Slightly smaller gap on mobile */
+        margin: 20px; /* Reduced margin on mobile */
+    }
+
+    .gameInfo-Container {
+        flex-direction: column; /* Stack info vertically */
+        align-items: center;
+        gap: 10px; /* Add spacing between stacked items */
+    }
+
+    .gameInfo {
+        font-size: 1.5em; /* Minimum readable font size */
+        text-align: center; /* Center text on mobile */
+    }
+
+    #playerInfo, #scores {
+        font-size: 1.5em; /* Ensure multiplayer info is readable */
+    }
+
+    .card {
+        height: 160px; /* Slightly smaller cards on mobile */
+        width: 120px;
+    }
+
+    button {
+        padding: 15px 20px; /* Slightly smaller buttons on mobile */
+        font-size: 1.2em;
+    }
+
+    .overlay-text {
+        padding: 15px; /* Reduced padding on mobile */
+    }
+
+    #modeSelection {
+        max-width: 90%; /* Allow overlay to use more screen width on mobile */
+        padding: 15px;
+    }
+}
+
+/* Back to Main Menu Button */
+.backToMenuBtn {
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    color: #ff6b6b;
+    border: 2px solid #ff6b6b;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: "Lunacy", cursive;
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+    margin-left: 10px;
+}
+
+.backToMenuBtn:hover {
+    background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+    border-color: #ff5252;
+    color: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 0 8px rgba(255, 82, 82, 0.7);
+}
+
+.backToMenuBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Overlay Main Menu Button */
+.overlay-menu-btn {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    border: 2px solid #ff6b6b;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-family: "Lunacy", cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+}
+
+.overlay-menu-btn:hover {
+    background: rgba(255, 82, 82, 0.3);
+    border-color: #ff5252;
+    color: #ff5252;
+    text-shadow: 0 0 8px rgba(255, 82, 82, 0.7);
+}
+
+/*
+    Author: ndmx-alex (Alexander)
+    Date: October 2025
+    Project: Guess Correctly - Spooky Memory Game
+    Description: Responsive CSS with mobile-friendly grid layout
+*/

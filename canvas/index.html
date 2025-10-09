@@ -1,0 +1,110 @@
+<!--
+    Guess Correctly - Landing Page
+    Created by: ndmx-alex (Alexander)
+    Features: Mode selection for the spooky memory game
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess Correctly - Choose Your Mode</title>
+    <link rel="icon" type="image/png" href="Images/Ghost.png">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, set, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "arcadeviva.firebaseapp.com",
+            databaseURL: "https://arcadeviva-default-rtdb.firebaseio.com",
+            projectId: "arcadeviva",
+            storageBucket: "arcadeviva.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Make db available globally
+        window.db = db;
+        window.ref = ref;
+        window.push = push;
+        window.set = set;
+        window.get = get;
+    </script>
+</head>
+<body>
+    <h1 class="pageTitle">Guess Correctly</h1>
+
+    <div class="modeSelection">
+        <div class="modeContainer">
+            <h2>Choose Your Game Mode</h2>
+
+            <button id="singlePlayerBtn" class="modeBtn">🎃 Single Player</button>
+
+            <button id="multiCreateBtn" class="modeBtn">👻 Create Multiplayer Game</button>
+
+            <div class="joinSection">
+                <input type="text" id="gameIdInput" placeholder="Enter Game ID to Join" class="gameIdInput">
+                <button id="multiJoinBtn" class="modeBtn joinBtn">🎮 Join Multiplayer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cache-busting version
+        const version = Date.now();
+
+        // Mode selection logic
+        document.getElementById('singlePlayerBtn').addEventListener('click', () => {
+            window.location.href = `game.html?mode=single&v=${version}`;
+        });
+
+        document.getElementById('multiCreateBtn').addEventListener('click', async () => {
+            try {
+                // Generate new game ID immediately
+                const gamesRef = ref(db, 'games');
+                const newGameRef = push(gamesRef);
+                const gameId = newGameRef.key;
+
+                // Initialize basic game state
+                await set(newGameRef, {
+                    status: 'waiting',
+                    created: Date.now(),
+                    hostId: Math.random().toString(36).substring(2, 9),
+                    players: {},
+                    currentTurn: null,
+                    matchedCards: [],
+                    revealed: {}
+                });
+
+                // Show game ID to user
+                alert(`Game created! Share this ID with your friend:\n\n${gameId}\n\nWaiting for another player to join...`);
+
+                // Redirect to game with the generated ID
+                window.location.href = `game.html?mode=create&id=${gameId}&v=${version}`;
+            } catch (error) {
+                console.error('Error creating game:', error);
+                alert('Failed to create game. Please try again.');
+            }
+        });
+
+        document.getElementById('multiJoinBtn').addEventListener('click', () => {
+            const gameId = document.getElementById('gameIdInput').value.trim();
+            if (!gameId) {
+                alert('Please enter a Game ID to join');
+                return;
+            }
+            window.location.href = `game.html?mode=join&id=${encodeURIComponent(gameId)}&v=${version}`;
+        });
+    </script>
+</body>
+</html>

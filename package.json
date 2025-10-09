@@ -1,0 +1,34 @@
+{
+  "name": "guess-correctly",
+  "version": "1.0.0",
+  "description": "A spooky Halloween-themed memory matching game with single-player and multiplayer modes",
+  "author": "ndmx-alex (Alexander)",
+  "main": "canvas/index.html",
+  "scripts": {
+    "deploy": "firebase deploy",
+    "serve": "firebase serve --host 0.0.0.0 --port 5000",
+    "build": "echo 'No build step required - static files only'",
+    "test": "echo 'Open canvas/index.html in browser for manual testing'",
+    "lint": "echo 'No linting configured - manual code review recommended'"
+  },
+  "keywords": [
+    "memory-game",
+    "card-matching",
+    "halloween",
+    "multiplayer",
+    "firebase",
+    "javascript"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "firebase-tools": "^12.6.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ndmx-alex/guess-correctly.git"
+  },
+  "homepage": "https://arcadeviva.web.app"
+}
