@@ -78,13 +78,31 @@
 
         document.getElementById('multiCreateBtn').addEventListener('click', async () => {
             try {
-                // Generate new game ID immediately
+                // Generate a 7-character alphanumeric game ID (A-Z, a-z, 0-9)
+                const generateGameId = () => {
+                    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    let result = '';
+                    for (let i = 0; i < 7; i++) {
+                        result += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+                    return result;
+                };
+
+                let gameId;
                 const gamesRef = ref(db, 'games');
-                const newGameRef = push(gamesRef);
-                const gameId = newGameRef.key;
+
+                // Generate unique game ID (retry if collision)
+                do {
+                    gameId = generateGameId();
+                    const gameRef = ref(db, `games/${gameId}`);
+                    const snapshot = await get(gameRef);
+                    if (!snapshot.exists()) break; // ID is available
+                } while (true);
+
+                const gameRef = ref(db, `games/${gameId}`);
 
                 // Initialize basic game state
-                await set(newGameRef, {
+                await set(gameRef, {
                     status: 'waiting_for_player2',
                     created: Date.now(),
                     hostId: Math.random().toString(36).substring(2, 9),
