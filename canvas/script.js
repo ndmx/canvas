@@ -45,8 +45,16 @@ const db = getDatabase(app);
 class AudioController {
     constructor() {
         this.isMuted = false;
+        this.audioInitialized = false;
         console.log('Initializing AudioController...');
-        // Initialize audio files for different game events with error handling
+        // Don't create Audio objects yet - wait for user interaction to avoid autoplay blocking
+    }
+
+    // Initialize audio only after user interaction
+    initializeAudio() {
+        if (this.audioInitialized) return;
+
+        console.log('Initializing audio after user interaction...');
         try {
             this.bgMusic = new Audio('Audio/creepy.mp3');
             this.flipSound = new Audio('Audio/flip.wav');
@@ -58,13 +66,12 @@ class AudioController {
             this.bgMusic.volume = 0.3;
             this.bgMusic.loop = true;
 
-            // Add load event listeners for debugging
+            // Add load event listeners for debugging (but less verbose)
             [this.bgMusic, this.flipSound, this.matchSound, this.victorySound, this.gameOverSound].forEach(audio => {
-                audio.addEventListener('loadstart', () => console.log('Audio loading started'));
-                audio.addEventListener('canplay', () => console.log('Audio can play'));
-                audio.addEventListener('error', (e) => console.error('Audio load error:', e));
+                audio.addEventListener('error', (e) => console.warn('Audio load error:', e));
             });
 
+            this.audioInitialized = true;
             console.log('Audio files initialized successfully');
         } catch (error) {
             console.warn('Audio initialization failed:', error);
@@ -98,6 +105,7 @@ class AudioController {
 
     /** Start background music playback */
     startMusic() {
+        this.initializeAudio();
         if (this.isMuted) return;
         try {
             this.bgMusic.play().catch(err => console.log('Audio play failed:', err));
@@ -118,6 +126,7 @@ class AudioController {
 
     /** Play card flip sound effect */
     flip() {
+        this.initializeAudio();
         if (this.isMuted) return;
         try {
             this.flipSound.play().catch(err => console.log('Flip sound failed:', err));
@@ -128,6 +137,7 @@ class AudioController {
 
     /** Play card match sound effect */
     match() {
+        this.initializeAudio();
         if (this.isMuted) return;
         try {
             this.matchSound.play().catch(err => console.log('Match sound failed:', err));
@@ -138,6 +148,7 @@ class AudioController {
 
     /** Play victory sound and stop background music */
     victory() {
+        this.initializeAudio();
         this.stopMusic();
         if (this.isMuted) return;
         try {
@@ -149,6 +160,7 @@ class AudioController {
 
     /** Play game over sound and stop background music */
     gameOver() {
+        this.initializeAudio();
         this.stopMusic();
         if (this.isMuted) return;
         try {
