@@ -85,7 +85,7 @@
 
                 // Initialize basic game state
                 await set(newGameRef, {
-                    status: 'waiting',
+                    status: 'waiting_for_player2',
                     created: Date.now(),
                     hostId: Math.random().toString(36).substring(2, 9),
                     players: {},

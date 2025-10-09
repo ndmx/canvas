@@ -328,7 +328,7 @@ class OnlineMultiplayerGame {
     }
 
     /**
-     * Create a new online multiplayer game as the host
+     * Create or join an online multiplayer game as the host
      */
     async createGame(providedGameId = null) {
         this.isHost = true;
@@ -338,14 +338,39 @@ class OnlineMultiplayerGame {
             this.gameId = providedGameId;
         }
 
-        // Generate card order and start listening
-        this.cardOrder = this.generateCardOrders();
-        await set(ref(db, `games/${this.gameId}/cardOrder`), this.cardOrder);
-        await set(ref(db, `games/${this.gameId}/players/${this.playerId}`), 'player1');
-        await set(ref(db, `games/${this.gameId}/status`), 'waiting_for_player2');
+        // Check if game already exists (created from index.html)
+        const gameRef = ref(db, `games/${this.gameId}`);
+        const snapshot = await get(gameRef);
+        const existingData = snapshot.val();
+
+        if (!existingData) {
+            // Game doesn't exist, create it
+            this.cardOrder = this.generateCardOrders();
+            const gameState = {
+                status: 'waiting_for_player2',
+                hostId: this.playerId,
+                players: {
+                    [this.playerId]: 'player1'
+                },
+                currentTurn: 'player1',
+                scores: { player1: { score: 0, clicks: 0 }, player2: { score: 0, clicks: 0 } },
+                cardOrder: this.cardOrder,
+                revealed: {},
+                matched: [],
+                created: Date.now()
+            };
+            await set(gameRef, gameState);
+            console.log('Created new online multiplayer game as host');
+        } else {
+            // Game exists, just register as player1 if not already
+            if (!existingData.players || !existingData.players[this.playerId]) {
+                await set(ref(db, `games/${this.gameId}/players/${this.playerId}`), 'player1');
+                console.log('Joined existing game as host');
+            }
+        }
 
         this.listenToGame();
-        console.log('Online multiplayer game created as host, waiting for player 2...');
+        console.log('Online multiplayer game ready, waiting for player 2...');
     }
 
     /**
@@ -365,8 +390,11 @@ class OnlineMultiplayerGame {
             return;
         }
 
+        console.log('Attempting to join game:', gameId, 'Status:', data.status, 'Players:', Object.keys(data.players || {}).length);
+
         if (data.status !== 'waiting_for_player2') {
-            alert('Game is not available to join!');
+            console.log('Game not available to join - status:', data.status);
+            alert('Game is not available to join! Status: ' + data.status);
             window.location.href = 'index.html';
             return;
         }
@@ -403,8 +431,12 @@ class OnlineMultiplayerGame {
 
             // Start game when both players are connected
             if (data.status === 'active' && !this.countdown) {
+                console.log('Game status is active, starting game for', this.playerRole);
                 this.startGame();
             }
+
+            // Debug logging
+            console.log(`Game update for ${this.playerRole}: status=${data.status}, players=${Object.keys(data.players || {}).length}, turn=${data.currentTurn}`);
 
             // Check for victory
             if (this.matchedCards.length === this.cardsArray.length) {
