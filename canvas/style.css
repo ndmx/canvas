@@ -551,6 +551,43 @@ input:focus {
     box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
 }
 
+/* Copy Button */
+.copyBtn {
+    background: rgba(255, 107, 107, 0.8);
+    border: 2px solid #ff6b6b;
+    border-radius: 6px;
+    color: white;
+    font-size: 1rem;
+    padding: 4px 8px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.copyBtn:hover {
+    background: rgba(255, 82, 82, 0.9);
+    border-color: #ff5252;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.copyBtn:active {
+    transform: scale(0.95);
+}
+
+.copyBtn.copied {
+    background: #4CAF50 !important;
+    border-color: #4CAF50 !important;
+    animation: pulse 0.6s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
 /* Multiplayer description */
 .multiplayer-description {
     margin-top: 15px;

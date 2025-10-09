@@ -57,7 +57,9 @@
                 <input type="text" id="gameIdInput" placeholder="Enter Game ID to Join" class="gameIdInput">
                 <button id="multiJoinBtn" class="modeBtn joinBtn">🎮 Join Multiplayer</button>
                 <div id="gameIdDisplay" class="gameIdDisplay" style="display: none;">
-                    <p>Your Game ID: <span id="generatedGameId" class="generatedGameId"></span></p>
+                    <p>Your Game ID: <span id="generatedGameId" class="generatedGameId"></span>
+                        <button id="copyGameIdBtn" class="copyBtn" title="Copy Game ID">📋</button>
+                    </p>
                     <p class="gameIdInstructions">Share this ID with your friend to let them join!</p>
                     <button id="startGameBtn" class="modeBtn startGameBtn">🎮 Start Game (Wait for friend)</button>
             </div>
@@ -107,6 +109,38 @@
                 // Add event listener for start game button
                 document.getElementById('startGameBtn').addEventListener('click', () => {
                     window.location.href = `game.html?mode=create&id=${gameId}&v=${version}`;
+                });
+
+                // Add event listener for copy button
+                document.getElementById('copyGameIdBtn').addEventListener('click', async () => {
+                    const gameIdText = generatedGameId.textContent;
+                    try {
+                        await navigator.clipboard.writeText(gameIdText);
+                        const copyBtn = document.getElementById('copyGameIdBtn');
+                        copyBtn.textContent = '✅';
+                        copyBtn.classList.add('copied');
+                        setTimeout(() => {
+                            copyBtn.textContent = '📋';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Failed to copy game ID:', err);
+                        // Fallback for older browsers
+                        const textArea = document.createElement('textarea');
+                        textArea.value = gameIdText;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+
+                        const copyBtn = document.getElementById('copyGameIdBtn');
+                        copyBtn.textContent = '✅';
+                        copyBtn.classList.add('copied');
+                        setTimeout(() => {
+                            copyBtn.textContent = '📋';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    }
                 });
 
                 console.log('Game created with ID:', gameId);
