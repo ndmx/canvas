@@ -23,13 +23,14 @@ import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/fi
 
 // Firebase Config - Replace with your actual Firebase project config
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
+    apiKey: "REMOVED",
     authDomain: "arcadeviva.firebaseapp.com",
     databaseURL: "https://arcadeviva-default-rtdb.firebaseio.com",
     projectId: "arcadeviva",
-    storageBucket: "arcadeviva.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    storageBucket: "arcadeviva.firebasestorage.app",
+    messagingSenderId: "602319250789",
+    appId: "1:602319250789:web:ea4bb623360fc037c0ed8c",
+    measurementId: "G-TPDEGR6EXB"
 };
 
 // Initialize Firebase app and database

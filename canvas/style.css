@@ -502,6 +502,55 @@ input:focus {
     text-shadow: 0 0 8px rgba(255, 82, 82, 0.7);
 }
 
+/* Game ID Display */
+.gameIdDisplay {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ff6b6b;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.gameIdDisplay p {
+    margin: 5px 0;
+    color: #ff6b6b;
+    font-family: "Lunacy", cursive;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+}
+
+.generatedGameId {
+    font-weight: bold;
+    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    color: #ff5252;
+    text-shadow: 0 0 10px rgba(255, 82, 82, 0.8);
+    font-family: monospace;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+.gameIdInstructions {
+    font-size: clamp(0.8rem, 2vw, 0.9rem) !important;
+    color: #ccc !important;
+    font-style: italic;
+}
+
+.startGameBtn {
+    margin-top: 10px;
+    background: linear-gradient(145deg, #4CAF50, #45a049);
+    border: 2px solid #4CAF50;
+    color: white;
+}
+
+.startGameBtn:hover {
+    background: linear-gradient(145deg, #45a049, #4CAF50);
+    border-color: #4CAF50;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+}
+
 /*
     Author: ndmx-alex (Alexander)
     Date: October 2025

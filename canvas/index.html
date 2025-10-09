@@ -20,13 +20,14 @@
 
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
+            apiKey: "REMOVED",
             authDomain: "arcadeviva.firebaseapp.com",
             databaseURL: "https://arcadeviva-default-rtdb.firebaseio.com",
             projectId: "arcadeviva",
-            storageBucket: "arcadeviva.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            storageBucket: "arcadeviva.firebasestorage.app",
+            messagingSenderId: "602319250789",
+            appId: "1:602319250789:web:ea4bb623360fc037c0ed8c",
+            measurementId: "G-TPDEGR6EXB"
         };
 
         // Initialize Firebase
@@ -55,6 +56,10 @@
             <div class="joinSection">
                 <input type="text" id="gameIdInput" placeholder="Enter Game ID to Join" class="gameIdInput">
                 <button id="multiJoinBtn" class="modeBtn joinBtn">🎮 Join Multiplayer</button>
+                <div id="gameIdDisplay" class="gameIdDisplay" style="display: none;">
+                    <p>Your Game ID: <span id="generatedGameId" class="generatedGameId"></span></p>
+                    <p class="gameIdInstructions">Share this ID with your friend to let them join!</p>
+                </div>
             </div>
         </div>
     </div>
@@ -86,11 +91,27 @@
                     revealed: {}
                 });
 
-                // Show game ID to user
-                alert(`Game created! Share this ID with your friend:\n\n${gameId}\n\nWaiting for another player to join...`);
+                // Hide the create/join buttons and show the game ID
+                document.getElementById('multiCreateBtn').style.display = 'none';
+                document.getElementById('gameIdInput').style.display = 'none';
+                document.getElementById('multiJoinBtn').style.display = 'none';
 
-                // Redirect to game with the generated ID
-                window.location.href = `game.html?mode=create&id=${gameId}&v=${version}`;
+                // Show the generated game ID
+                const gameIdDisplay = document.getElementById('gameIdDisplay');
+                const generatedGameId = document.getElementById('generatedGameId');
+                generatedGameId.textContent = gameId;
+                gameIdDisplay.style.display = 'block';
+
+                // Add a "Start Game" button
+                const startGameBtn = document.createElement('button');
+                startGameBtn.className = 'modeBtn startGameBtn';
+                startGameBtn.textContent = '🎮 Start Game (Wait for friend to join)';
+                startGameBtn.onclick = () => {
+                    window.location.href = `game.html?mode=create&id=${gameId}&v=${version}`;
+                };
+                gameIdDisplay.appendChild(startGameBtn);
+
+                console.log('Game created with ID:', gameId);
             } catch (error) {
                 console.error('Error creating game:', error);
                 alert('Failed to create game. Please try again.');
