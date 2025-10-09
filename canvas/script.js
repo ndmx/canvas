@@ -478,6 +478,9 @@ class OnlineMultiplayerGame {
             return;
         }
 
+        // Immediately show the card flip for responsive feel
+        card.classList.add('visible');
+
         this.audioController.flip();
 
         // Update click count
@@ -485,8 +488,11 @@ class OnlineMultiplayerGame {
         set(ref(db, `games/${this.gameId}/scores`), this.players);
         this.updateFlipDisplay();
 
-        // Reveal card locally and in Firebase
+        // Reveal card in Firebase (this will sync to other players)
         set(ref(db, `games/${this.gameId}/revealed/${index}`), true);
+
+        // Update local revealed state immediately
+        this.revealed[index] = true;
 
         if (this.cardToCheck !== null) {
             // Second card - check for match
@@ -548,6 +554,11 @@ class OnlineMultiplayerGame {
             // Hide cards in Firebase (they'll be hidden via sync)
             set(ref(db, `games/${this.gameId}/revealed/${index1}`), false);
             set(ref(db, `games/${this.gameId}/revealed/${index2}`), false);
+
+            // Update local revealed state
+            this.revealed[index1] = false;
+            this.revealed[index2] = false;
+
             this.busy = false;
 
             // Switch to other player
@@ -959,16 +970,22 @@ function ready() {
         // Create online multiplayer game
         multiGame = new OnlineMultiplayerGame(100, cards);
         singleGame = null;
-        // Make cards visible immediately for multiplayer
-        cards.forEach(card => card.style.visibility = 'visible');
+        // Ensure cards are visible (not hidden) but start face-down
+        cards.forEach(card => {
+            card.style.visibility = 'visible';
+            card.classList.remove('visible'); // Start face-down
+        });
         multiGame.createGame(gameId);
         console.log('Online multiplayer create mode started with ID:', gameId);
     } else if (mode === 'join' && gameId) {
         // Join online multiplayer game
         multiGame = new OnlineMultiplayerGame(100, cards);
         singleGame = null;
-        // Make cards visible immediately for multiplayer
-        cards.forEach(card => card.style.visibility = 'visible');
+        // Ensure cards are visible (not hidden) but start face-down
+        cards.forEach(card => {
+            card.style.visibility = 'visible';
+            card.classList.remove('visible'); // Start face-down
+        });
         multiGame.joinGame(gameId);
         console.log('Online multiplayer join mode started with ID:', gameId);
     } else {
