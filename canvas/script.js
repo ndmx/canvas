@@ -4,20 +4,38 @@
     Date: October 2025
 
     Description:
-    - Single-player and local multiplayer memory matching game
-    - Simple hot-seat multiplayer (same device, take turns)
-    - No database required - works entirely offline!
+    - Single-player and online multiplayer memory matching game
+    - Real-time online multiplayer across different devices/locations
+    - Firebase Realtime Database for game synchronization
     - Halloween-themed audio and visual effects
 
     Features:
     - 16 cards (8 pairs) memory game
     - Single player: Classic mode with timer
-    - Multiplayer: Local hot-seat mode (same device)
+    - Multiplayer: Online real-time mode (any device/location)
     - Score tracking and turn management
-    - No external dependencies - pure JavaScript!
+    - Firebase-powered synchronization
 */
 
-// No Firebase needed for simple local multiplayer!
+// Firebase Configuration and Initialization for Online Multiplayer
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+import { getDatabase, ref, set, onValue, push, get } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+
+// Firebase Config - Real configuration for online multiplayer
+const firebaseConfig = {
+    apiKey: "REMOVED",
+    authDomain: "arcadeviva.firebaseapp.com",
+    databaseURL: "https://arcadeviva-default-rtdb.firebaseio.com",
+    projectId: "arcadeviva",
+    storageBucket: "arcadeviva.firebasestorage.app",
+    messagingSenderId: "602319250789",
+    appId: "1:602319250789:web:ea4bb623360fc037c0ed8c",
+    measurementId: "G-TPDEGR6EXB"
+};
+
+// Initialize Firebase app and database
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 /**
  * AudioController Class
@@ -283,10 +301,10 @@ class MixOrMatch {
 }
 
 /**
- * SimpleMultiplayerGame Class - Local Hot-Seat Multiplayer
- * Simple turn-based multiplayer for same device - no database required!
+ * OnlineMultiplayerGame Class - Real-time Online Multiplayer
+ * Synchronizes game state across different devices/locations using Firebase!
  */
-class SimpleMultiplayerGame {
+class OnlineMultiplayerGame {
     constructor(totalTime, cards) {
         this.cardsArray = cards;          // Array of card DOM elements
         this.totalTime = totalTime;       // Total game time in seconds
@@ -295,58 +313,143 @@ class SimpleMultiplayerGame {
         this.ticker = document.getElementById('flipCounter');   // Flip counter display
         this.audioController = new AudioController();           // Audio controller instance
 
-        // Simple multiplayer properties
-        this.currentPlayer = 1;           // Current player (1 or 2)
-        this.player1Score = 0;            // Player 1 score
-        this.player2Score = 0;            // Player 2 score
-        this.player1Clicks = 0;           // Player 1 click count
-        this.player2Clicks = 0;           // Player 2 click count
+        // Online multiplayer properties
+        this.gameId = null;               // Unique game identifier
+        this.isHost = false;              // Whether this player is the game host
+        this.playerId = Math.random().toString(36).substring(2, 9); // Unique player ID
+        this.playerRole = null;           // 'player1' or 'player2'
+        this.players = { player1: { score: 0, clicks: 0 }, player2: { score: 0, clicks: 0 } };
+        this.currentTurn = null;          // Current player's turn ('player1' or 'player2')
         this.matchedCards = [];           // Array of matched card indices
+        this.revealed = {};               // Object tracking revealed card states
+        this.cardOrder = null;            // Shuffled card order from Firebase
         this.cardToCheck = null;          // Card currently being checked for match
         this.busy = false;                // Prevent multiple rapid clicks
     }
 
     /**
-     * Start the simple multiplayer game
-     * No database needed - just local turn-based gameplay
+     * Create a new online multiplayer game as the host
      */
-    startGame() {
-        this.countdown = this.startCountdown();
-        this.updatePlayerInfo();
-        this.updateScores();
-        console.log('Simple multiplayer game started - Player', this.currentPlayer, 'turn');
+    async createGame(providedGameId = null) {
+        this.isHost = true;
+        this.playerRole = 'player1';
+
+        if (providedGameId) {
+            this.gameId = providedGameId;
+        }
+
+        // Generate card order and start listening
+        this.cardOrder = this.generateCardOrders();
+        await set(ref(db, `games/${this.gameId}/cardOrder`), this.cardOrder);
+        await set(ref(db, `games/${this.gameId}/players/${this.playerId}`), 'player1');
+        await set(ref(db, `games/${this.gameId}/status`), 'waiting_for_player2');
+
+        this.listenToGame();
+        console.log('Online multiplayer game created as host, waiting for player 2...');
     }
 
     /**
-     * Handle card flipping for multiplayer
+     * Join an existing online multiplayer game
+     */
+    async joinGame(gameId) {
+        this.gameId = gameId;
+        this.isHost = false;
+
+        const gameRef = ref(db, `games/${this.gameId}`);
+        const snapshot = await get(gameRef);
+        const data = snapshot.val();
+
+        if (!data) {
+            alert('Game not found!');
+            window.location.href = 'index.html';
+            return;
+        }
+
+        if (data.status !== 'waiting_for_player2') {
+            alert('Game is not available to join!');
+            window.location.href = 'index.html';
+            return;
+        }
+
+        this.playerRole = 'player2';
+        await set(ref(db, `games/${this.gameId}/players/${this.playerId}`), 'player2');
+        await set(ref(db, `games/${this.gameId}/status`), 'active');
+        await set(ref(db, `games/${this.gameId}/currentTurn`), 'player1');
+
+        this.listenToGame();
+        console.log('Joined online multiplayer game as player 2');
+    }
+
+    /**
+     * Listen for real-time game updates from Firebase
+     */
+    listenToGame() {
+        const gameRef = ref(db, `games/${this.gameId}`);
+        onValue(gameRef, (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            // Update local state from Firebase
+            this.players = data.scores || { player1: { score: 0, clicks: 0 }, player2: { score: 0, clicks: 0 } };
+            this.currentTurn = data.currentTurn;
+            this.matchedCards = data.matched || [];
+            this.revealed = data.revealed || {};
+            this.cardOrder = data.cardOrder;
+
+            // Update UI
+            this.updateScores();
+            this.updatePlayerInfo();
+            this.syncBoard(data.cardOrder, data.revealed, data.matched);
+
+            // Start game when both players are connected
+            if (data.status === 'active' && !this.countdown) {
+                this.startGame();
+            }
+
+            // Check for victory
+            if (this.matchedCards.length === this.cardsArray.length) {
+                this.victory();
+            }
+        });
+    }
+
+    /**
+     * Start the online multiplayer game
+     */
+    startGame() {
+        this.countdown = this.startCountdown();
+        this.shuffleCards(); // Use the card order from Firebase
+        console.log(`Online multiplayer game started! You are ${this.playerRole}`);
+    }
+
+    /**
+     * Handle card flipping for online multiplayer
      */
     flipCard(card) {
         const index = this.cardsArray.indexOf(card);
 
-        // Prevent clicking if busy, card already matched, or wrong player's turn
-        if (this.busy || this.matchedCards.includes(index) || card === this.cardToCheck) {
+        // Prevent clicking if not your turn, busy, card already matched, or card already revealed
+        if (this.currentTurn !== this.playerRole || this.busy ||
+            this.matchedCards.includes(index) || this.revealed[index]) {
             return;
         }
 
-        // Update click count for current player
-        if (this.currentPlayer === 1) {
-            this.player1Clicks++;
-        } else {
-            this.player2Clicks++;
-        }
-
         this.audioController.flip();
+
+        // Update click count
+        this.players[this.playerRole].clicks++;
+        set(ref(db, `games/${this.gameId}/scores`), this.players);
         this.updateFlipDisplay();
 
-        // Reveal the card
-        card.classList.add('visible');
+        // Reveal card locally and in Firebase
+        set(ref(db, `games/${this.gameId}/revealed/${index}`), true);
 
-        if (this.cardToCheck) {
+        if (this.cardToCheck !== null) {
             // Second card - check for match
             this.checkForCardMatch(card);
         } else {
             // First card
-            this.cardToCheck = card;
+            this.cardToCheck = index;
         }
     }
 
@@ -354,15 +457,16 @@ class SimpleMultiplayerGame {
      * Check if two flipped cards match
      */
     checkForCardMatch(card) {
-        const index1 = this.cardsArray.indexOf(this.cardToCheck);
         const index2 = this.cardsArray.indexOf(card);
+        const card1 = this.cardsArray[this.cardToCheck];
+        const card2 = card;
 
-        if (this.getCardType(this.cardToCheck) === this.getCardType(card)) {
+        if (this.getCardType(card1) === this.getCardType(card2)) {
             // Match found!
-            this.cardMatch(index1, index2);
+            this.cardMatch(this.cardToCheck, index2);
         } else {
             // No match - flip cards back and switch turns
-            this.cardMismatch(index1, index2);
+            this.cardMismatch(this.cardToCheck, index2);
         }
 
         this.cardToCheck = null;
@@ -372,28 +476,20 @@ class SimpleMultiplayerGame {
      * Handle successful card match
      */
     cardMatch(index1, index2) {
-        this.matchedCards.push(index1, index2);
-
-        // Add matched class to cards
-        this.cardsArray[index1].classList.add('matched');
-        this.cardsArray[index2].classList.add('matched');
+        const updatedMatched = [...this.matchedCards, index1, index2];
+        set(ref(db, `games/${this.gameId}/matched`), updatedMatched);
 
         this.audioController.match();
 
         // Award point to current player
-        if (this.currentPlayer === 1) {
-            this.player1Score++;
-        } else {
-            this.player2Score++;
-        }
-
-        this.updateScores();
+        this.players[this.playerRole].score++;
+        set(ref(db, `games/${this.gameId}/scores`), this.players);
 
         // Keep the same player's turn on successful match
-        console.log(`🎉 Match! Player ${this.currentPlayer} scores! Turn stays with Player ${this.currentPlayer}`);
+        console.log(`🎉 Match! ${this.playerRole} scores! Turn stays with ${this.playerRole}`);
 
         // Check for victory
-        if (this.matchedCards.length === this.cardsArray.length) {
+        if (updatedMatched.length === this.cardsArray.length) {
             this.victory();
         }
     }
@@ -405,16 +501,16 @@ class SimpleMultiplayerGame {
         this.busy = true;
 
         setTimeout(() => {
-            // Hide the cards again
-            this.cardsArray[index1].classList.remove('visible');
-            this.cardsArray[index2].classList.remove('visible');
+            // Hide cards in Firebase (they'll be hidden via sync)
+            set(ref(db, `games/${this.gameId}/revealed/${index1}`), false);
+            set(ref(db, `games/${this.gameId}/revealed/${index2}`), false);
             this.busy = false;
 
             // Switch to other player
-            this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
-            this.updatePlayerInfo();
+            const nextTurn = this.currentTurn === 'player1' ? 'player2' : 'player1';
+            set(ref(db, `games/${this.gameId}/currentTurn`), nextTurn);
 
-            console.log(`❌ No match! Switching to Player ${this.currentPlayer}'s turn`);
+            console.log(`❌ No match! Switching to ${nextTurn}'s turn`);
         }, 1000);
     }
 
@@ -431,36 +527,65 @@ class SimpleMultiplayerGame {
     }
 
     /**
-     * Shuffle the cards on the board
+     * Shuffle the cards on the board using Firebase card order
      */
     shuffleCards() {
-        const orders = this.generateCardOrders();
-        this.cardsArray.forEach((card, i) => {
-            card.style.order = orders[i];
-        });
+        if (this.cardOrder) {
+            this.cardsArray.forEach((card, i) => {
+                card.style.order = this.cardOrder[i];
+            });
+        }
     }
 
     /**
      * Update the player turn display
      */
     updatePlayerInfo() {
-        const playerEmoji = this.currentPlayer === 1 ? '🎃' : '🧛';
-        const playerName = this.currentPlayer === 1 ? 'Ghost' : 'Vampire';
-        document.getElementById('playerInfo').innerText = `${playerEmoji} ${playerName}'s Turn`;
+        if (this.currentTurn === this.playerRole) {
+            document.getElementById('playerInfo').innerText = `🎮 Your Turn!`;
+        } else {
+            const otherPlayer = this.currentTurn === 'player1' ? 'Player 1' : 'Player 2';
+            document.getElementById('playerInfo').innerText = `⏳ ${otherPlayer}'s Turn`;
+        }
     }
 
     /**
      * Update the score display
      */
     updateScores() {
-        document.getElementById('scores').innerText = `🎃 ${this.player1Score} | 🧛 ${this.player2Score}`;
+        const p1 = this.players.player1 || { score: 0, clicks: 0 };
+        const p2 = this.players.player2 || { score: 0, clicks: 0 };
+        document.getElementById('scores').innerText = `P1: ${p1.score} | P2: ${p2.score}`;
     }
 
     /**
      * Update the flip count display
      */
     updateFlipDisplay() {
-        this.ticker.innerText = `🎃 ${this.player1Clicks} | 🧛 ${this.player2Clicks}`;
+        const p1 = this.players.player1 || { score: 0, clicks: 0 };
+        const p2 = this.players.player2 || { score: 0, clicks: 0 };
+        this.ticker.innerText = `P1: ${p1.clicks} | P2: ${p2.clicks}`;
+    }
+
+    /**
+     * Sync board state from Firebase
+     */
+    syncBoard(cardOrder, revealed, matched) {
+        if (cardOrder) {
+            this.cardsArray.forEach((card, i) => {
+                card.style.order = cardOrder[i];
+                if (matched && matched.includes(i)) {
+                    card.classList.add('matched');
+                } else {
+                    card.classList.remove('matched');
+                }
+                if (revealed && revealed[i]) {
+                    card.classList.add('visible');
+                } else {
+                    card.classList.remove('visible');
+                }
+            });
+        }
     }
 
     /**
@@ -491,13 +616,18 @@ class SimpleMultiplayerGame {
         clearInterval(this.countdown);
         this.audioController.victory();
 
-        const winner = this.player1Score > this.player2Score ? 'Ghost (Player 1)' :
-                      this.player2Score > this.player1Score ? 'Vampire (Player 2)' : 'It\'s a tie!';
+        const p1 = this.players.player1 || { score: 0 };
+        const p2 = this.players.player2 || { score: 0 };
+        const winner = p1.score > p2.score ? 'Player 1' :
+                      p2.score > p1.score ? 'Player 2' : 'It\'s a tie!';
+
+        const winnerText = winner === 'Player 1' ? 'You won!' :
+                          winner === 'Player 2' ? 'Player 2 won!' : 'It\'s a tie!';
 
         document.getElementById('victory-text').innerHTML = `
             🎉 VICTORY! 🎉<br>
-            <span class="overlay-text-small">Winner: ${winner}</span><br>
-            <span class="overlay-text-small">Final Score: 🎃 ${this.player1Score} | 🧛 ${this.player2Score}</span><br>
+            <span class="overlay-text-small">${winnerText}</span><br>
+            <span class="overlay-text-small">Final Score: P1: ${p1.score} | P2: ${p2.score}</span><br>
             <span class="overlay-text-small">Click to play again</span>
         `;
         document.getElementById('victory-text').classList.add('visible');
@@ -510,33 +640,37 @@ class SimpleMultiplayerGame {
         clearInterval(this.countdown);
         this.audioController.gameOver();
 
-        const winner = this.player1Score > this.player2Score ? 'Ghost (Player 1)' :
-                      this.player2Score > this.player1Score ? 'Vampire (Player 2)' : 'It\'s a tie!';
+        const p1 = this.players.player1 || { score: 0 };
+        const p2 = this.players.player2 || { score: 0 };
+        const winner = p1.score > p2.score ? 'Player 1' :
+                      p2.score > p1.score ? 'Player 2' : 'It\'s a tie!';
+
+        const winnerText = winner === 'Player 1' ? 'You won!' :
+                          winner === 'Player 2' ? 'Player 2 won!' : 'It\'s a tie!';
 
         document.getElementById('gameOvertext').innerHTML = `
             ⏰ TIME'S UP! ⏰<br>
-            <span class="overlay-text-small">Winner: ${winner}</span><br>
-            <span class="overlay-text-small">Final Score: 🎃 ${this.player1Score} | 🧛 ${this.player2Score}</span><br>
+            <span class="overlay-text-small">${winnerText}</span><br>
+            <span class="overlay-text-small">Final Score: P1: ${p1.score} | P2: ${p2.score}</span><br>
             <span class="overlay-text-small">Click to play again</span>
         `;
         document.getElementById('gameOvertext').classList.add('visible');
     }
 
-    syncBoard(orders, revealed, matched) {
-        this.cardsArray.forEach((card, i) => {
-            card.style.order = orders[i];
-            if (matched && matched.includes(i)) {
-                card.classList.add('matched');
-            } else {
-                card.classList.remove('matched');
+    /**
+     * Start the countdown timer
+     */
+    startCountdown() {
+        return setInterval(() => {
+            this.timeRemaining--;
+            this.timer.innerText = this.timeRemaining;
+
+            if (this.timeRemaining === 0) {
+                this.gameOver();
             }
-            if (revealed && revealed[i]) {
-                card.classList.add('visible');
-            } else {
-                card.classList.remove('visible');
-            }
-        });
+        }, 1000);
     }
+
 
     startGame() {
         this.totalClicks = 0;
@@ -777,35 +911,22 @@ function ready() {
         cards.forEach(card => card.style.visibility = 'visible');
         document.getElementById('startText').classList.add('visible');
         console.log('Single player mode started, cards visible');
-    } else if (mode === 'multiplayer') {
-        // Simple local multiplayer (hot-seat style)
-        multiGame = new SimpleMultiplayerGame(100, cards);
+    } else if (mode === 'create') {
+        // Create online multiplayer game
+        multiGame = new OnlineMultiplayerGame(100, cards);
         singleGame = null;
         // Make cards visible immediately for multiplayer
         cards.forEach(card => card.style.visibility = 'visible');
-        // Show player selection instead of start overlay
-        document.getElementById('startText').innerHTML = `
-            <span>Select Starting Player</span>
-            <div style="margin-top: 20px;">
-                <button id="player1Btn" class="modeBtn" style="margin: 10px;">🎃 Player 1 (Ghost)</button>
-                <button id="player2Btn" class="modeBtn" style="margin: 10px;">🧛 Player 2 (Vampire)</button>
-            </div>
-        `;
-
-        // Add event listeners for player selection
-        document.getElementById('player1Btn').addEventListener('click', () => {
-            multiGame.currentPlayer = 1;
-            document.getElementById('startText').classList.remove('visible');
-            multiGame.startGame();
-        });
-
-        document.getElementById('player2Btn').addEventListener('click', () => {
-            multiGame.currentPlayer = 2;
-            document.getElementById('startText').classList.remove('visible');
-            multiGame.startGame();
-        });
-
-        console.log('Simple multiplayer mode started, cards visible');
+        multiGame.createGame(gameId);
+        console.log('Online multiplayer create mode started with ID:', gameId);
+    } else if (mode === 'join' && gameId) {
+        // Join online multiplayer game
+        multiGame = new OnlineMultiplayerGame(100, cards);
+        singleGame = null;
+        // Make cards visible immediately for multiplayer
+        cards.forEach(card => card.style.visibility = 'visible');
+        multiGame.joinGame(gameId);
+        console.log('Online multiplayer join mode started with ID:', gameId);
     } else {
         // No valid mode - redirect back to index
         console.log('No valid mode specified, redirecting to index');
