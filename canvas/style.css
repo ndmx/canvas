@@ -551,6 +551,26 @@ input:focus {
     box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
 }
 
+/* Multiplayer description */
+.multiplayer-description {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #ff6b6b;
+    border-radius: 8px;
+    color: #ff6b6b;
+    font-family: "Lunacy", cursive;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    text-align: center;
+    line-height: 1.4;
+}
+
+.multiplayer-description small {
+    color: #ccc;
+    font-size: clamp(0.75rem, 2vw, 0.85rem);
+    font-style: italic;
+}
+
 /*
     Author: ndmx-alex (Alexander)
     Date: October 2025
